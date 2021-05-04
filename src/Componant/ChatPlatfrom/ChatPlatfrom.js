@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import logo from './194938.png'
+import React, { useContext, useEffect, useState } from 'react';
+import logo from '../../194938.png'
 import { setPusherClient } from 'react-pusher';
 import Pusher from 'pusher-js';
 import pusher from 'pusher-js';
 import axios from 'axios';
 import ChatList from '../../ChatList'
 import ChatBox from '../../ChatBox'
+import { UserContext } from '../../App';
 
 
 const ChatPlatfrom = () => {
@@ -18,19 +19,7 @@ const ChatPlatfrom = () => {
 
     const [chats, setChats] = useState([]);
     const [text, setText] = useState(null);
-
-    const [username, setUsername] = useState();
-    const [img, setImg] = useState();
-    useEffect(() => {
-        axios.get('https://randomuser.me/api/')
-            .then(response => {
-                const data = response.data.results[0].name.first;
-                const img = response.data.results[0].picture.medium;
-                console.log(img);
-                setUsername(data);
-                setImg(img);
-            })
-    }, [])
+    const [user, setUser] = useContext(UserContext);
 
     const channel = pusherClient.subscribe('chat');
     channel.bind('message', data => {
@@ -41,7 +30,7 @@ const ChatPlatfrom = () => {
     const handleTextChange = (e) => {
         if (e.keyCode === 13) {
             const payload = {
-                username: username,
+                username: user.displayName,
                 message: text
             };
             axios.post('http://localhost:5000/message', payload);
@@ -58,10 +47,10 @@ const ChatPlatfrom = () => {
                     <h1 className="App-title">Welcome to React-Pusher Chat</h1>
                 </header>
                 <section>
-                    <ChatList img={img} chats={chats} />
+                    <ChatList img={user.photoURL} chats={chats} />
                     <ChatBox
                         text={text}
-                        username={username}
+                        username={user.displayName}
                         handleTextChange={handleTextChange}
                     />
                 </section>

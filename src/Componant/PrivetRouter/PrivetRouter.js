@@ -4,24 +4,23 @@ import { UserContext } from '../../App';
 
 const PrivetRouter = ({ children, ...rest }) => {
     const [user, setUser] = useContext(UserContext);
+
     return (
-        <div>
-            <Route
-                {...rest}
-                render={({ location }) =>
-                    user.name ? (
-                        children
-                    ) : (
-                        <Redirect
-                            to={{
-                                pathname: "/login",
-                                state: { from: location }
-                            }}
-                        />
-                    )
-                }
-            />
-        </div>
+        <Route
+            {...rest}
+            render={({ location }) =>
+                user.email ? (
+                    children
+                ) : (
+                    <Redirect
+                        to={{
+                            pathname: "/login",
+                            state: { from: location }
+                        }}
+                    />
+                )
+            }
+        />
     );
 };
 
